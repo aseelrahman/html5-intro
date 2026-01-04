@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Professional QR Code Generator (Working)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- QR Code Styling -->
+  <script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.7.2/lib/qr-code-styling.js"></script>
+
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+    body { font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+  </style>
+</head>
+
+<body class="bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen">
+  <!-- Header -->
+  <header class="bg-white shadow-sm border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-slate-900">QR Code Generator</h1>
+          <p class="text-slate-600 mt-1">All content types • Logo • SVG/PNG/JPEG/WebP</p>
+        </div>
+        <div class="hidden sm:block">
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800">
+            Scan-safe defaults
+          </span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <!-- Left controls -->
+      <div class="lg:col-span-1 space-y-6">
+
+        <!-- Content -->
+        <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+          <h2 class="text-lg font-semibold text-slate-900 mb-4">Content</h2>
+
+          <label class="block text-sm font-medium text-slate-700 mb-2">Content Type</label>
+          <select id="contentType" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+            <option value="url" selected>Website URL</option>
+            <option value="text">Plain Text</option>
+            <option value="email">Email</option>
+            <option value="phone">Phone Number</option>
+            <option value="sms">SMS</option>
+            <option value="wifi">WiFi</option>
+            <option value="vcard">vCard (Contact)</option>
+          </select>
+
+          <div id="contentInputs" class="mt-4 space-y-4">
+            <!-- URL -->
+            <div id="urlSection" class="content-section">
+              <label class="block text-sm font-medium text-slate-700 mb-2">Website URL</label>
+              <input id="urlInput" type="text" value="https://weddingtripbd.com"
+                class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                placeholder="https://example.com" />
+              <p class="text-xs text-slate-500 mt-1">Tip: include https:// (we’ll auto-add if missing)</p>
+            </div>
+
+            <!-- Text -->
+            <div id="textSection" class="content-section hidden">
+              <label class="block text-sm font-medium text-slate-700 mb-2">Text</label>
+              <textarea id="textInput" rows="4"
+                class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                placeholder="Enter any text...">Hello World</textarea>
+            </div>
+
+            <!-- Email -->
+            <div id="emailSection" class="content-section hidden space-y-3">
+              <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Email Address</label>
+                <input id="emailInput" type="email" value="contact@example.com"
+                  class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                  placeholder="contact@example.com" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Subject (optional)</label>
+                <input id="subjectInput" type="text"
+                  class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                  placeholder="Subject..." />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Body (optional)</label>
+                <textarea id="bodyInput" rows="3"
+                  class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                  placeholder="Message..."></textarea>
+              </div>
+            </div>
+
+            <!-- Phone -->
+            <div id="phoneSection" class="content-section hidden">
+              <label class="block text-sm font-medium text-slate-700 mb-2">Phone Number</label>
+              <input id="phoneInput" type="tel" value="+1234567890"
+                class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                placeholder="+1234567890" />
+              <p class="text-xs text-slate-500 mt-1">Include country code if possible.</p>
+            </div>
+
+            <!-- SMS -->
+            <div id="smsSection" class="content-section hidden space-y-3">
+              <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Phone Number</label>
+                <input id="smsPhoneInput" type="tel" value="+1234567890"
+                  class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                  placeholder="+1234567890" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Message (optional)</label>
+                <textarea id="smsMessageInput" rows="3"
+                  class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                  placeholder="Your message..."></textarea>
+              </div>
+              <p class="text-xs text-slate-500">We auto-handle iPhone vs Android separators.</p>
+            </div>
+
+            <!-- WiFi -->
+            <div id="wifiSection" class="content-section hidden space-y-3">
+              <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Network Name (SSID)</label>
+                <input id="wifiSSID" type="text" value="MyWiFi"
+                  class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                  placeholder="MyWiFi" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Password</label>
+                <input id="wifiPassword" type="text" value="password123"
+                  class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                  placeholder="password" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Security</label>
+                <select id="wifiSecurity"
+                  class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                  <option value="WPA" selected>WPA/WPA2</option>
+                  <option value="WEP">WEP</option>
+                  <option value="nopass">None</option>
+                </select>
+              </div>
+              <p class="text-xs text-slate-500">We escape special characters automatically.</p>
+            </div>
+
+            <!-- vCard -->
+            <div id="vcardSection" class="content-section hidden space-y-3">
+              <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Full Name</label>
+                <input id="vcardName" type="text" value="John Doe"
+                  class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" />
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-sm font-medium text-slate-700 mb-2">Phone</label>
+                  <input id="vcardPhone" type="tel" value="+1234567890"
+                    class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-slate-700 mb-2">Email</label>
+                  <input id="vcardEmail" type="email" value="john@example.com"
+                    class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" />
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Organization (optional)</label>
+                <input id="vcardOrg" type="text" value="WeddingTripBD"
+                  class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Website (optional)</label>
+                <input id="vcardURL" type="text" value="https://weddingtripbd.com"
+                  class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" />
+              </div>
+              <p class="text-xs text-slate-500">Uses vCard 3.0 with CRLF line breaks for best compatibility.</p>
+            </div>
+          </div>
+
+          <div class="mt-4 text-xs text-slate-500">
+            Data length: <span id="dataLength">0</span>
+          </div>
+        </section>
+
+        <!-- Design -->
+        <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+          <h2 class="text-lg font-semibold text-slate-900 mb-4">Design</h2>
+
+          <label class="block text-sm font-medium text-slate-700 mb-2">Dot Style</label>
+          <select id="dotStyle" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition mb-4">
+            <option value="rounded" selected>Rounded</option>
+            <option value="dots">Dots</option>
+            <option value="classy">Classy</option>
+            <option value="classy-rounded">Classy Rounded</option>
+            <option value="square">Square</option>
+            <option value="extra-rounded">Extra Rounded</option>
+          </select>
+
+          <label class="block text-sm font-medium text-slate-700 mb-2">Corner Square Style</label>
+          <select id="cornerSquareStyle" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition mb-4">
+            <option value="rounded" selected>Rounded</option>
+            <option value="dot">Dot</option>
+            <option value="square">Square</option>
+            <option value="extra-rounded">Extra Rounded</option>
+          </select>
+
+          <label class="block text-sm font-medium text-slate-700 mb-2">Corner Dot Style</label>
+          <select id="cornerDotStyle" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition mb-4">
+            <option value="rounded" selected>Rounded</option>
+            <option value="dot">Dot</option>
+            <option value="square">Square</option>
+          </select>
+
+          <div class="grid grid-cols-2 gap-3 mb-4">
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-2">Dot Color</label>
+              <input id="dotColor" type="color" value="#000000" class="w-full h-10 border border-slate-300 rounded-lg cursor-pointer" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-2">Background</label>
+              <input id="bgColor" type="color" value="#ffffff" class="w-full h-10 border border-slate-300 rounded-lg cursor-pointer" />
+            </div>
+          </div>
+
+          <label class="flex items-center cursor-pointer mb-2">
+            <input id="useGradient" type="checkbox" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500" />
+            <span class="ml-2 text-sm font-medium text-slate-700">Use Gradient (dots only)</span>
+          </label>
+
+          <div id="gradientOptions" class="hidden space-y-3 mt-3">
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-2">Gradient Type</label>
+              <select id="gradientType" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                <option value="linear" selected>Linear</option>
+                <option value="radial">Radial</option>
+              </select>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Second Color</label>
+                <input id="gradientColor" type="color" value="#6366f1" class="w-full h-10 border border-slate-300 rounded-lg cursor-pointer" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Rotation (deg)</label>
+                <input id="gradientRotation" type="number" value="0" min="0" max="360"
+                  class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" />
+              </div>
+            </div>
+            <p class="text-xs text-slate-500">Corners stay solid for best scan reliability.</p>
+          </div>
+        </section>
+
+        <!-- Advanced -->
+        <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+          <h2 class="text-lg font-semibold text-slate-900 mb-4">Advanced</h2>
+
+          <label class="block text-sm font-medium text-slate-700 mb-2">Size (px)</label>
+          <input id="qrSize" type="number" value="1000" min="200" max="2000" step="100"
+            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" />
+          <p class="text-xs text-slate-500 mt-1">Recommended: 800–1200 for most use, higher for print assets.</p>
+
+          <label class="block text-sm font-medium text-slate-700 mb-2 mt-4">Error Correction</label>
+          <select id="errorCorrection" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+            <option value="L">Low (7%)</option>
+            <option value="M">Medium (15%)</option>
+            <option value="Q">Quartile (25%)</option>
+            <option value="H" selected>High (30%) – best with logos</option>
+          </select>
+
+          <label class="block text-sm font-medium text-slate-700 mb-2 mt-4">Margin</label>
+          <input id="qrMargin" type="range" value="10" min="0" max="50" class="w-full" />
+          <p class="text-xs text-slate-500 mt-1">Current: <span id="marginValue">10</span>px</p>
+
+          <label class="block text-sm font-medium text-slate-700 mb-2 mt-4">Logo (optional)</label>
+          <input id="logoUpload" type="file" accept="image/*" class="w-full" />
+          <p class="text-xs text-slate-500 mt-1">For “rounded” look: use a transparent PNG logo that’s already circular/rounded.</p>
+
+          <div id="logoSizeWrap" class="mt-4 hidden">
+            <label class="block text-sm font-medium text-slate-700 mb-2">Logo size (scan-safe)</label>
+            <input id="logoSize" type="range" value="0.28" min="0.15" max="0.32" step="0.01" class="w-full" />
+            <p class="text-xs text-slate-500 mt-1"><span id="logoSizeValue">28</span>% of QR size</p>
+          </div>
+
+          <div id="logoPreview" class="hidden mt-4">
+            <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-200">
+              <div class="flex items-center">
+                <img id="logoImg" src="" class="w-10 h-10 rounded-full object-cover border border-slate-200" />
+                <span id="logoName" class="ml-3 text-sm text-slate-700"></span>
+              </div>
+              <button id="removeLogoBtn" type="button" class="text-red-600 hover:text-red-700 text-sm font-semibold">
+                Remove
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Download -->
+        <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+          <h2 class="text-lg font-semibold text-slate-900 mb-4">Download</h2>
+
+          <label class="block text-sm font-medium text-slate-700 mb-2">Format</label>
+          <select id="downloadFormat" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition mb-4">
+            <option value="svg" selected>SVG (Best for print)</option>
+            <option value="png">PNG</option>
+            <option value="jpeg">JPEG</option>
+            <option value="webp">WebP</option>
+          </select>
+
+          <button id="downloadBtn" type="button"
+            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg transition shadow-md hover:shadow-lg">
+            Download QR Code
+          </button>
+
+          <p class="text-xs text-slate-500 mt-3 text-center">Always scan-test after changing colors/logo.</p>
+        </section>
+      </div>
+
+      <!-- Right preview -->
+      <div class="lg:col-span-2">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-8 sticky top-8">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-lg font-semibold text-slate-900">Live Preview</h2>
+            <span class="text-sm text-slate-500" id="statusText"></span>
+          </div>
+
+          <div id="qrPreview" class="flex items-center justify-center bg-slate-50 rounded-xl p-8 min-h-[500px]"></div>
+
+          <!-- hidden canvas container used for raster exports -->
+          <div id="qrHiddenCanvas" class="hidden"></div>
+
+          <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <div class="text-sm text-blue-700 space-y-1">
+              <p>• SVG is best for print (infinite scaling).</p>
+              <p>• For logo QR codes, keep logo ≤ 32% (this tool enforces it).</p>
+              <p>• Dark dots + light background scans best.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="bg-white border-t border-slate-200 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <p class="text-center text-slate-600 text-sm">
+        Professional QR Code Generator • Self-generated (no redirects)
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    // =========================
+    // State
+    // =========================
+    let qrSvg;      // for preview + SVG download
+    let qrCanvas;   // for PNG/JPEG/WebP
+    let logoData = null;
+
+    // =========================
+    // Helpers (reliability fixes)
+    // =========================
+
+    function escapeWiFi(str) {
+      // Escape \ ; , : " per common WiFi QR conventions
+      return String(str || "").replace(/([\\;,:"])/g, "\\$1");
+    }
+
+    function escapeVCard(str) {
+      // Escape commas and semicolons (common vCard issues)
+      return String(str || "").replace(/([,;])/g, "\\$1");
+    }
+
+    function normalizeUrl(input) {
+      const raw = (input || "").trim();
+      if (!raw) return "https://example.com";
+      const withProto = raw.startsWith("http://") || raw.startsWith("https://") ? raw : "https://" + raw;
+      try { return new URL(withProto).toString(); } catch { return "https://example.com"; }
+    }
+
+    function smsSeparator() {
+      // iOS uses &body=, many Android scanners accept ?body=
+      const ua = navigator.userAgent || "";
+      const isiOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+      return isiOS ? "&" : "?";
+    }
+
+    function buildMailto(email, subject, body) {
+      const e = (email || "").trim();
+      let s = (subject || "").trim();
+      let b = (body || "").trim();
+      let mailto = `mailto:${encodeURIComponent(e)}`;
+      const params = [];
+      if (s) params.push(`subject=${encodeURIComponent(s)}`);
+      if (b) params.push(`body=${encodeURIComponent(b)}`);
+      if (params.length) mailto += "?" + params.join("&");
+      return mailto;
+    }
+
+    function getContentData() {
+      const type = contentType.value;
+
+      switch (type) {
+        case "url":
+          return normalizeUrl(urlInput.value);
+
+        case "text":
+          return (textInput.value || "").toString();
+
+        case "email":
+          return buildMailto(emailInput.value, subjectInput.value, bodyInput.value);
+
+        case "phone":
+          return `tel:${(phoneInput.value || "").trim()}`;
+
+        case "sms": {
+          const phone = (smsPhoneInput.value || "").trim();
+          const msg = (smsMessageInput.value || "").trim();
+          // sms:+123?body=Hello  OR  sms:+123&body=Hello (iOS)
+          return msg ? `sms:${phone}${smsSeparator()}body=${encodeURIComponent(msg)}` : `sms:${phone}`;
+        }
+
+        case "wifi": {
+          const sec = wifiSecurity.value;
+          const ssid = escapeWiFi(wifiSSID.value);
+          const pass = escapeWiFi(wifiPassword.value);
+          if (sec === "nopass") return `WIFI:T:nopass;S:${ssid};;`;
+          return `WIFI:T:${sec};S:${ssid};P:${pass};;`;
+        }
+
+        case "vcard": {
+          const name = escapeVCard(vcardName.value);
+          const phone = (vcardPhone.value || "").trim();
+          const email = (vcardEmail.value || "").trim();
+          const org = escapeVCard(vcardOrg.value);
+          const url = normalizeUrl(vcardURL.value);
+
+          // vCard 3.0 with CRLF for best compatibility
+          const lines = [
+            "BEGIN:VCARD",
+            "VERSION:3.0",
+            `FN:${name}`,
+            phone ? `TEL:${phone}` : "",
+            email ? `EMAIL:${email}` : "",
+            org ? `ORG:${org}` : "",
+            url ? `URL:${url}` : "",
+            "END:VCARD"
+          ].filter(Boolean);
+
+          return lines.join("\r\n");
+        }
+
+        default:
+          return "https://example.com";
+      }
+    }
+
+    function computeDotsColor() {
+      const base = dotColor.value;
+      if (!useGradient.checked) return base;
+
+      const gType = gradientType.value;
+      const c2 = gradientColor.value;
+      const deg = Number(gradientRotation.value || 0);
+
+      // qr-code-styling expects gradient object
+      return {
+        type: gType,
+        rotation: (deg * Math.PI) / 180,
+        colorStops: [
+          { offset: 0, color: base },
+          { offset: 1, color: c2 },
+        ],
+      };
+    }
+
+    function safeLogoSize(value) {
+      // Clamp to scan-safe range
+      const v = Number(value);
+      if (Number.isNaN(v)) return 0.28;
+      return Math.min(0.32, Math.max(0.15, v));
+    }
+
+    // =========================
+    // Show/hide content sections
+    // =========================
+    function showSection(type) {
+      const sections = ["url", "text", "email", "phone", "sms", "wifi", "vcard"];
+      for (const s of sections) {
+        const el = document.getElementById(s + "Section");
+        if (!el) continue;
+        el.classList.toggle("hidden", s !== type);
+      }
+    }
+
+    // =========================
+    // Init QR instances
+    // =========================
+    function makeBaseConfig(kind) {
+      // kind: "svg" or "canvas"
+      return {
+        width: Number(qrSize.value),
+        height: Number(qrSize.value),
+        type: kind,
+        data: getContentData(),
+        margin: Number(qrMargin.value),
+
+        qrOptions: { errorCorrectionLevel: errorCorrection.value },
+
+        dotsOptions: {
+          type: dotStyle.value,
+          color: computeDotsColor(),
+        },
+
+        // Keep corners SOLID color for maximum compatibility (even if dots are gradient)
+        cornersSquareOptions: {
+          type: cornerSquareStyle.value,
+          color: dotColor.value,
+        },
+        cornersDotOptions: {
+          type: cornerDotStyle.value,
+          color: dotColor.value,
+        },
+
+        backgroundOptions: { color: bgColor.value },
+
+        image: logoData || undefined,
+        imageOptions: {
+          crossOrigin: "anonymous",
+          imageSize: safeLogoSize(logoSize.value),
+          margin: 12,
+          hideBackgroundDots: true,
+        },
+      };
+    }
+
+    function init() {
+      // Clear containers
+      qrPreview.innerHTML = "";
+      qrHiddenCanvas.innerHTML = "";
+
+      qrSvg = new QRCodeStyling(makeBaseConfig("svg"));
+      qrSvg.append(qrPreview);
+
+      qrCanvas = new QRCodeStyling(makeBaseConfig("canvas"));
+      qrCanvas.append(qrHiddenCanvas);
+
+      updateDataLength();
+      setStatus("Ready");
+    }
+
+    // =========================
+    // Update QR instances (debounced)
+    // =========================
+    let t = null;
+    function requestUpdate() {
+      clearTimeout(t);
+      t = setTimeout(updateAll, 120);
+    }
+
+    function updateAll() {
+      if (!qrSvg || !qrCanvas) return;
+
+      // enforce logo size clamp in UI too
+      const clamped = safeLogoSize(logoSize.value);
+      if (Number(logoSize.value) !== clamped) logoSize.value = clamped;
+      logoSizeValue.textContent = Math.round(clamped * 100);
+
+      marginValue.textContent = qrMargin.value;
+
+      const configUpdate = {
+        data: getContentData(),
+        width: Number(qrSize.value),
+        height: Number(qrSize.value),
+        margin: Number(qrMargin.value),
+
+        qrOptions: { errorCorrectionLevel: errorCorrection.value },
+
+        dotsOptions: {
+          type: dotStyle.value,
+          color: computeDotsColor(),
+        },
+
+        cornersSquareOptions: {
+          type: cornerSquareStyle.value,
+          color: dotColor.value,
+        },
+        cornersDotOptions: {
+          type: cornerDotStyle.value,
+          color: dotColor.value,
+        },
+
+        backgroundOptions: { color: bgColor.value },
+
+        image: logoData || undefined,
+        imageOptions: {
+          crossOrigin: "anonymous",
+          imageSize: clamped,
+          margin: 12,
+          hideBackgroundDots: true,
+        },
+      };
+
+      try {
+        qrSvg.update(configUpdate);
+        qrCanvas.update(configUpdate);
+        updateDataLength();
+        setStatus("Updated");
+      } catch (e) {
+        console.error(e);
+        setStatus("Update error (check console)");
+      }
+    }
+
+    function updateDataLength() {
+      const data = getContentData();
+      dataLength.textContent = `${data.length} characters`;
+    }
+
+    function setStatus(msg) {
+      statusText.textContent = msg;
+    }
+
+    // =========================
+    // Logo handling
+    // =========================
+    logoUpload.addEventListener("change", (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        logoData = ev.target.result;
+        logoImg.src = logoData;
+        logoName.textContent = file.name;
+
+        logoPreview.classList.remove("hidden");
+        logoSizeWrap.classList.remove("hidden");
+
+        requestUpdate();
+      };
+      reader.readAsDataURL(file);
+    });
+
+    removeLogoBtn.addEventListener("click", () => {
+      logoData = null;
+      logoUpload.value = "";
+      logoPreview.classList.add("hidden");
+      logoSizeWrap.classList.add("hidden");
+      requestUpdate();
+    });
+
+    // =========================
+    // Content type switching
+    // =========================
+    contentType.addEventListener("change", () => {
+      showSection(contentType.value);
+      requestUpdate();
+    });
+
+    // =========================
+    // Gradient options toggle
+    // =========================
+    useGradient.addEventListener("change", () => {
+      gradientOptions.classList.toggle("hidden", !useGradient.checked);
+      requestUpdate();
+    });
+
+    // =========================
+    // Inputs listeners
+    // =========================
+    const watchedIds = [
+      // content
+      "urlInput","textInput","emailInput","subjectInput","bodyInput",
+      "phoneInput","smsPhoneInput","smsMessageInput",
+      "wifiSSID","wifiPassword","wifiSecurity",
+      "vcardName","vcardPhone","vcardEmail","vcardOrg","vcardURL",
+
+      // design
+      "dotStyle","cornerSquareStyle","cornerDotStyle","dotColor","bgColor",
+      "gradientType","gradientColor","gradientRotation",
+
+      // advanced
+      "qrSize","errorCorrection","qrMargin","logoSize"
+    ];
+
+    for (const id of watchedIds) {
+      const el = document.getElementById(id);
+      if (!el) continue;
+      el.addEventListener("input", requestUpdate);
+      el.addEventListener("change", requestUpdate);
+    }
+
+    // Margin display
+    qrMargin.addEventListener("input", () => {
+      marginValue.textContent = qrMargin.value;
+    });
+
+    // Logo size display
+    logoSize.addEventListener("input", () => {
+      logoSizeValue.textContent = Math.round(safeLogoSize(logoSize.value) * 100);
+    });
+
+    // =========================
+    // Download
+    // =========================
+    downloadBtn.addEventListener("click", () => {
+      const format = downloadFormat.value;
+      const type = contentType.value;
+
+      const filename = `qr-${type}-${new Date().toISOString().slice(0,19).replace(/[:T]/g,"-")}`;
+
+      try {
+        if (format === "svg") {
+          qrSvg.download({ name: filename, extension: "svg" });
+        } else {
+          // raster formats from canvas instance
+          qrCanvas.download({ name: filename, extension: format });
+        }
+      } catch (e) {
+        console.error(e);
+        alert("Download failed in this browser. Try PNG or SVG, or check console errors.");
+      }
+    });
+
+    // =========================
+    // Boot
+    // =========================
+    window.addEventListener("load", () => {
+      showSection(contentType.value);
+      init();
+      requestUpdate();
+    });
+  </script>
+</body>
+</html>
