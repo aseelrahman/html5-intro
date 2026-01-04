@@ -5,27 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Table</title>
     <style>
-        table{
-            border-collapse: collapse;
-        }
-        td, th{
-            border: solid 1px;
-            padding: 10px 20px;
-        }
+      table {
+        border-collapse: collapse;
+      }
+      td,
+      th {
+        border: solid 1px;
+        padding: 10px 20px;
+      }
     </style>
+    <link rel="stylesheet" href="styles/nav.css">
   </head>
   <body>
+    <header>
+      <nav>
+        <ul>
+          <li><a href="blogs.html">Blogs</a></li>
+          <li><a href="center.html">Center</a></li>
+          <li><a href="flex.html">Flex</a></li>
+          <li><a href="table.html">Table</a></li>
+          <li><a href="form.html">Form</a></li>
+          <li><a href="auto.html">Margin Auto</a></li>
+        </ul>
+      </nav>
+    </header>
     <main>
       <h2>Friends</h2>
       <table>
-        <caption>My friend Collection</caption>
+        <caption>
+          My friend Collection
+        </caption>
         <thead>
-            <tr>
-                <th>No</th>
-                <th>First Name</th>
-                <th>last Name</th>
-                <th>Age</th>
-            </tr>
+          <tr>
+            <th>No</th>
+            <th>First Name</th>
+            <th>last Name</th>
+            <th>Age</th>
+          </tr>
         </thead>
         <tbody>
           <tr>
@@ -48,7 +64,7 @@
           </tr>
         </tbody>
         <tfoot>
-            <td colspan="4">Total Firends: 4</td>
+          <td colspan="4">Total Firends: 4</td>
         </tfoot>
       </table>
     </main>
